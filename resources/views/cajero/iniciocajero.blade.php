@@ -10,11 +10,14 @@
         <h6 class="mt-2">VENTAS</h6>
 
         
-        {{-- Nombre del usuario autenticado (abre modal de perfil) --}}
-        <a href="#" data-bs-toggle="modal" data-bs-target="#modalPerfil"
-        style="font-size: 14px; margin-top: 8px; color: #5D4037; font-weight: bold; display:inline-block; text-decoration:none;">
-            👤 {{ Auth::user()->nombre }}
-        </a>
+        <div style="font-size: 14px; margin-top: 8px; color: #5D4037; font-weight: bold;">
+           {{-- Nombre del usuario autenticado --}}
+            <a href="#" data-bs-toggle="modal" data-bs-target="#modalPerfil"
+                onclick="event.preventDefault();"
+                style="text-decoration:none; color:#f3af43; font-weight:bold; font-size:14px;">
+                👤 {{ Auth::user()->nombre }}
+            </a>
+        </div>
 
     </div>
 
@@ -31,5 +34,13 @@
 
 @section('contenido')
     @livewire('vendedor.dashboard')
-    @livewire('perfil.editar-perfil')
+    @livewire('perfil.edit')
+
 @endsection
+         <script>
+            Livewire.on('cerrar-modal', () => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalPerfil'));
+                if (modal) modal.hide();
+            });
+        </script>
+

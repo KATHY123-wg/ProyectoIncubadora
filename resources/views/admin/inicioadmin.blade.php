@@ -10,21 +10,28 @@
         <h6 class="mt-2">ADMINISTRADOR</h6>
 
         <div style="font-size: 14px; margin-top: 8px; color: #5D4037; font-weight: bold;">
-            <div class="user-name">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 16 16" style="margin-right:.25rem; vertical-align:-.125em;">
-                <path fill="#FF6600" d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/>
-                <path fill="#FF6600" d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                </svg>
-                {{ Auth::user()->nombre }}
-            </div>
+             <a href="#" data-bs-toggle="modal" data-bs-target="#modalPerfil"
+                onclick="event.preventDefault();"
+                style="text-decoration:none; color:#f3af43; font-weight:bold; font-size:14px;">
+                👤 {{ Auth::user()->nombre }}
+            </a>
          </div>
     </div>
 
     <a class="nav-link btn-sidebar" href="{{ route('admin.inicio') }}">
         <i class="bi bi-house-door me-2 menu-icon"></i> Inicio
     </a>
+    <a class="nav-link" href="{{ route('admin.usuarios') }}">
+        <i class="bi bi-people-fill me-2 menu-icon"></i> Gestión de Usuarios
+    </a>
+    <a class="nav-link" href="{{ route('admin.incubadoras') }}">
+        <i class="bi bi-egg-fried me-2"></i> Gestión de Incubadoras
+    </a>
     <a class="nav-link" href="{{ route('admin.graficos') }}">
         <i class="bi bi-bar-chart-line me-2 menu-icon"></i> Gráficos
+    </a>
+    <a class="nav-link" href="{{ route('admin.ventas') }}">
+        <i class="bi bi-cash-stack me-2 menu-icon"></i> Ventas
     </a>
     <div class="sidebar-dropdown">
         <a class="nav-link btn-sidebar d-flex justify-content-between align-items-center" href="#">
@@ -44,25 +51,12 @@
     <a class="nav-link" href="{{ route('admin.nosotros') }}">
         <i class="bi bi-people me-2 menu-icon"></i> Nosotros
     </a>
-    <a class="nav-link" href="{{ route('admin.ventas') }}">
-        <i class="bi bi-cash-stack me-2 menu-icon"></i> Ventas
-    </a>
-    <a class="nav-link" href="{{ route('admin.usuarios') }}">
-        <i class="bi bi-people-fill me-2 menu-icon"></i> Gestión de Usuarios
-    </a>
-    <a class="nav-link" href="{{ route('admin.incubadoras') }}">
-        <i class="bi bi-egg-fried me-2"></i> Gestión de Incubadoras
-    </a>
+    
 </div>
 @endsection
 
 @section('contenido')
-
-{{-- ======= VIDEO DE FONDO A PANTALLA COMPLETA ======= --}}
-<style>
-
-</style>
-
+@livewire('perfil.edit')
 
 <div id="bgVideoWrap" aria-hidden="true">
   <video
@@ -121,42 +115,79 @@
             
         </div>
     </div>
-    <style>
-        /*botones de video*/
-  /* Fondo de video */
-  #bgVideoWrap{
-    position: fixed;
-    inset: 0;
-    z-index: 0;          /* detrás del contenido */
-    overflow: hidden;
-    pointer-events: none;/* que NUNCA bloquee clics */
-  }
+<style>
+  /* ===== Fondo de video (mínimo cambio) ===== */
+  html, body{
+  height:100%;
+  background: transparent !important;  /* <- antes era #f4f6f9 */
+  color:#1f2a37;
+}
+
+
+  /* El video va pegado al viewport y detrás de todo */
+ #bgVideoWrap{ z-index: 0; }     /* <- antes -2 */
+ #bgDim{ z-index: 1; }           /* <- antes -1 */
+
   #bgVideo{
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-    display: block;
+    position:absolute; top:0; left:0;
+    width:100%; height:100%;
+    object-fit: cover; display:block;
   }
-  #bgDim{
-    position: fixed;
-    inset: 0;
-    background: rgba(196, 225, 231, 0.25);
-    pointer-events: none;
-    z-index: 0;
+  /* Oscurecido para contraste SIN tapar contenido */
+
+  /* ===== Mantén tu UI por encima y sin “planchas” que tapen el video ===== */
+  /* Cualquier wrapper común que suele traer fondo, lo dejamos transparente */
+  .main-content,
+  .content,
+  .content-wrapper,
+  .page-content,
+  .container,
+  .container-fluid,
+  section,
+  main,
+  #content{
+    background: transparent !important;
   }
 
-  /* Deja ver el video debajo del contenido central si quieres */
-  .main-content, .navbar, footer{ 
-    position: relative;
-    z-index: 2;          /* por encima del video */
-    background: transparent;
-  }
 
-  /* NO tocar el position del sidebar, solo súbelo de nivel */
-  #sidebar{
-    z-index: 3;          /* encima del contenido central */
-  }
-    </style>
+  /* Navbar y Sidebar: iguales que tenías (sólidos y por encima) */
+  .navbar{ z-index:10; background:hsl(69, 27%, 37%)!important; color:#fff; }
+  #sidebar{ z-index:9;  background:#a0a887; }
+
+:root{
+  --blue-gray: 237, 242, 250;   /* valores RGB de #edf2fa */
+}
+
+.card{
+  background: rgba(var(--blue-gray), 0.70); /* mismo tono, 80% opaco */
+  backdrop-filter: blur(4px);               /* mantiene legibilidad */
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+  .card-title{ color:#1f2a37; }
+  .card-text{  color:#4b5563; }
+  .text-dark{ color:#1f2a37 !important; }
+  .text-secondary{ color:#4b5563 !important; }
+
+  /* Modales por encima de todo */
+  .modal{ z-index:2000 !important; }
+  .modal-backdrop{ z-index:1990 !important; }
+  /* ===== Footer siempre visible ===== */
+footer {
+  position: relative;
+  z-index: 5;                        /* más que el video/velo */
+  background: #6f7744 !important;    /* color sólido (igual que tu navbar) */
+  color: #fff !important;
+  text-align: center;
+  padding: 10px 0;
+}
+
+/* Variante con transparencia si prefieres ver el video detrás */
+footer.transparent {
+  background: #6f7744 !important; /* café con opacidad */
+}
+
+</style>
 </section>
 
 {{-- Forzar autoplay si el navegador lo bloquea sin interacción --}}
@@ -177,10 +208,12 @@ document.addEventListener('DOMContentLoaded', function () {
   window.addEventListener('focus', tryPlay);
 });
 </script>
+   <script>
+     Livewire.on('cerrar-modal', () => {
+     const modal = bootstrap.Modal.getInstance(document.getElementById('modalPerfil'));
+      if (modal) modal.hide();
+     });
+    </script>
 
-@livewireScripts
-@once
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-@endonce
-@stack('scripts')
+
 @endsection

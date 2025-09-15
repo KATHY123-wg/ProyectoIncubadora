@@ -144,7 +144,7 @@ class IncubadorasAdmin extends Component
     {
         // ✅ Normaliza a MAYÚSCULAS y sin espacios antes de validar
         $this->codigo = strtoupper(preg_replace('/\s+/', '', (string)$this->codigo));
-
+        $this->descripcion = strtoupper((string)$this->descripcion);
         $this->validate();
 
         // ✅ ESTADO automático según asignación

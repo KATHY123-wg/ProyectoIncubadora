@@ -125,7 +125,17 @@
     });
     </script>
     @endif
+    
     --}}
+    @push('scripts')
+        <script>
+            Livewire.on('cerrar-modal', () => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalPerfil'));
+                if (modal) modal.hide();
+            });
+        </script>
+    @endpush
+
 
     {{-- Preguntar si deseas desactivar también las incubadoras del usuario (Sí / No) --}}
     @if (session('preguntar_baja_inc'))
@@ -193,12 +203,13 @@
         });
     });
 </script>
+
     @endif
 </body>
-
 @livewireScripts
 @once
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @endonce
 @stack('scripts')
 </html>

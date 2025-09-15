@@ -183,12 +183,9 @@
     </div>
 
     <div class="card-footer d-flex justify-content-end gap-2">
-      {{--<button class="btn btn-outline-secondary" type="button" wire:click="limpiarAvicultor">
-        <i class="bi bi-eraser me-1"></i> Limpiar
-      </button>--}}
       <button class="btn btn-success btn-cta"
               wire:click="guardar"
-              @disabled(!$avicultor_id || !$incubadora_id || !$precio_bs)
+            
               wire:loading.attr="disabled"
               wire:target="guardar">
         <span wire:loading wire:target="guardar" class="spinner-border spinner-border-sm me-2"></span>
@@ -196,17 +193,67 @@
       </button>
     </div>
   </div>
+  <div id="toastContainer"
+     class="toast-container position-fixed bottom-0 end-0 p-3"
+     style="z-index:3000;"></div>
 
-  {{-- Autofocus (opcional) --}}
+
   @push('scripts')
-  <script>
-    document.addEventListener('livewire:initialized', () => {
-      // si quieres autofocus al cargar la pantalla:
-      setTimeout(() => {
-        const i = document.getElementById('inputBuscadorAvicultor');
-        if (i) i.focus();
-      }, 150);
-    });
-  </script>
-  @endpush
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Autofocus inicial
+  setTimeout(() => document.getElementById('inputBuscadorAvicultor')?.focus(), 150);
+
+  // Asegurar contenedor de toasts
+  let container = document.getElementById('toastContainer');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toastContainer';
+    container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+    container.style.zIndex = 3000;
+    document.body.appendChild(container);
+  }
+
+  // Mostrar toast
+  const showToast = (payload = {}) => {
+    const tipo = (payload.tipo || 'info').toLowerCase();
+    const msg  = String(payload.msg ?? '').trim();
+
+    const cls =
+      tipo === 'success' ? 'text-bg-success' :
+      (tipo === 'error' || tipo === 'danger') ? 'text-bg-danger' :
+      tipo === 'warning' ? 'text-bg-warning text-dark' :
+      tipo === 'info'    ? 'text-bg-info text-dark' :
+      'text-bg-primary';
+
+    const el = document.createElement('div');
+    el.className = `toast ${cls} border-0`;
+    el.setAttribute('role','alert');
+    el.setAttribute('aria-live','assertive');
+    el.setAttribute('aria-atomic','true');
+    el.style.minWidth = '320px';
+    el.style.borderRadius = '12px';
+    el.innerHTML = `
+      <div class="d-flex align-items-center">
+        <div class="toast-body" style="font-size:.95rem;line-height:1.35;">${msg}</div>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    `;
+    container.appendChild(el);
+    new bootstrap.Toast(el, { delay: 3500 }).show();
+    el.addEventListener('hidden.bs.toast', () => el.remove());
+  };
+
+  // Livewire v3 -> Browser Event ($this->dispatch('toast', ...))
+  window.addEventListener('toast', (e) => showToast(e.detail || {}));
+
+  // (Opcional) por si en algún sitio usas Livewire.on('toast', ...)
+  if (window.Livewire?.on) {
+    Livewire.on('toast', showToast);
+    Livewire.on('focus', (p={}) => p.id && document.getElementById(p.id)?.focus());
+  }
+});
+</script>
+@endpush
+
 </div>

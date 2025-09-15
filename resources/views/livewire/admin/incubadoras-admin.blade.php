@@ -119,25 +119,32 @@
                         </div>--}}
 
                         <div class="mb-3">
-                            <label class="form-label">Código</label>
-                            <input
-                                type="text"
-                                class="form-control {{ $incubadoraId ? 'bg-light' : '' }}"
-                                wire:model.defer="codigo"
-                                oninput="this.value=this.value.replace(/\s+/g,'').toUpperCase()"
-                                maxlength="20"
-                                @if($incubadoraId) readonly tabindex="-1" @endif
-                                placeholder="EJ: INCU001"
-                            >
-                            @error('codigo') <small class="text-danger">{{ $message }}</small> @enderror
-                            <small class="text-muted">En mayúsculas, sin espacios. Debe ser único.</small>
-                        </div>
+    <label class="form-label">Código</label>
+                    <input
+                        type="text"
+                        class="form-control {{ $incubadoraId ? 'bg-light' : '' }}"
+                        wire:model.defer="codigo"
+                        oninput="this.value=this.value.replace(/\s+/g,'').toUpperCase()"
+                        maxlength="20"
+                        @if($incubadoraId) readonly tabindex="-1" @endif
+                        placeholder="EJ: INCU001"
+                    >
+                    @error('codigo') <small class="text-danger">{{ $message }}</small> @enderror
+                    <small class="text-muted">En mayúsculas, sin espacios. Debe ser único.</small>
+                </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Descripción</label>
-                            <textarea class="form-control" wire:model.defer="descripcion" maxlength="255" placeholder="Descripción breve"></textarea>
-                            @error('descripcion') <small class="text-danger">{{ $message }}</small> @enderror
-                        </div>
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <textarea
+                        class="form-control"
+                        wire:model.defer="descripcion"
+                        maxlength="255"
+                        placeholder="DESCRIPCIÓN BREVE"
+                        oninput="this.value=this.value.toUpperCase()"
+                    ></textarea>
+                    @error('descripcion') <small class="text-danger">{{ $message }}</small> @enderror
+                    <small class="text-muted">En mayúsculas automáticamente.</small>
+                </div>
 
                         {{-- 🔒 Campo Avicultor oculto temporalmente (no asignar aún) --}}
                         {{-- 

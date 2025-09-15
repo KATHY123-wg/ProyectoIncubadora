@@ -10,11 +10,11 @@
         <h6 class="mt-2">AVICULTOR</h6>
 
         {{-- Nombre del usuario autenticado --}}
-        <div style="font-size: 14px; margin-top: 8px; color: #5D4037; font-weight: bold;">
-            <div class="user-name">
-                <i class="bi bi-person-fill" style="color: orange;"></i> {{ Auth::user()->nombre }}
-            </div>
-        </div>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#modalPerfil"
+            onclick="event.preventDefault();"
+            style="text-decoration:none; color:#5D4037; font-weight:bold; font-size:14px;">
+            👤 {{ Auth::user()->nombre }}
+        </a>
     </div>
             <a class="nav-link btn-sidebar" href="{{ route('avicultor.inicio') }}">
                 <i class="bi bi-house me-2 menu-icon"></i> Inicio
@@ -35,7 +35,9 @@
 @endsection
 
 @section('contenido')
-    <h2 class="mb-4 fw-bold">Bienvenido {{ Auth::user()->name }} - Avicultor</h2>
+    @livewire('perfil.edit')
+
+    <h2 class="mb-4 fw-bold">Bienvenido {{ Auth::user()->nombre }} - Avicultor</h2>
 
     <h4 class="fw-bold mb-4">PROCESO ACTUAL DE INCUBACIÓN</h4>
 
@@ -156,4 +158,13 @@
         });
     });
     </script>
+    
+        <script>
+            Livewire.on('cerrar-modal', () => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalPerfil'));
+                if (modal) modal.hide();
+            });
+        </script>
+
+
 @endsection

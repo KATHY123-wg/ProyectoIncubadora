@@ -42,7 +42,7 @@
     {{-- ======= LISTADO DE PROCESOS DE LA INCUBADORA (con estilo) ======= --}}
     <style>
       :root{
-        --olive:#2d2f22;
+        --olive:#adb57c;
         --olive-50:#f3f6ec;
         --olive-100:#e6edd8;
         --olive-200:#d9e4c4;

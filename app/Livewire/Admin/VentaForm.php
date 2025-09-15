@@ -156,7 +156,7 @@ class VentaForm extends Component
 
     /** Guardar la venta (1 incubadora por venta) */
         /** Guardar la venta (1 incubadora por venta) */
-    public function guardar()
+ public function guardar()
     {
         // intenta resolver el avicultor automáticamente si coincide exacto
         $this->ensureAvicultorSeleccionado();
@@ -209,32 +209,52 @@ class VentaForm extends Component
             ]);
         });
 
-        // 🔹 Limpiar todos los campos del formulario automáticamente
-        $this->reset([
-            'buscador',
-            'sugerencias',
-            'avicultor_id',
-            'nombre_avicultor',
-            'incubadora_id',
-            'precio_bs',
-        ]);
-
-        // restaurar fecha actual por defecto
-        $this->fecha_venta = now('America/La_Paz')->format('Y-m-d\TH:i');
-
         // refrescar combo
+        $this->reset(['incubadora_id']);
         $this->incubadoras = Incubadora::whereNull('usuario_id')
             ->where('estado', 0)
-            ->orderBy('codigo')
-            ->get(['id','codigo'])
-            ->toArray();
+            ->orderBy('codigo')->get(['id','codigo'])->toArray();
+       $this->resetFormularioVenta();
 
-        // notificación
-        $this->dispatch('toast', ['tipo' => 'success', 'msg' => 'Venta registrada.']);
+        $this->dispatch('toast', [
+        'tipo' => 'success',
+        'msg'  => 'Se vendió correctamente la incubadora'
+]);
+
     }
-
     public function render()
     {
         return view('livewire.admin.venta-form');
     }
+    private function resetFormularioVenta()
+{
+    // Limpia estado del formulario
+    $this->reset([
+        'buscador',
+        'showSug',
+        'sugerencias',
+        'focusIndex',
+        'avicultor_id',
+        'nombre_avicultor',
+        'incubadora_id',
+        'precio_bs',
+    ]);
+
+    // Fecha: déjala en "ahora" (o ponla en '' si prefieres vacía)
+    $this->fecha_venta = now()->format('Y-m-d\TH:i');
+
+    // Refresca combo de incubadoras libres
+    $this->incubadoras = Incubadora::whereNull('usuario_id')
+        ->where('estado', 0)
+        ->orderBy('codigo')
+        ->get(['id','codigo'])
+        ->toArray();
+
+    // Limpia mensajes de validación
+    $this->resetValidation();
+
+    // Enfoca el buscador otra vez
+    $this->dispatch('focus', ['id' => 'inputBuscadorAvicultor']);
+}
+
 }
