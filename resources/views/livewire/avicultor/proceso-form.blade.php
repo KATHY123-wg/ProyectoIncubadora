@@ -41,38 +41,100 @@
 
     {{-- ======= LISTADO DE PROCESOS DE LA INCUBADORA (con estilo) ======= --}}
     <style>
-      :root{
-        --olive:#adb57c;
-        --olive-50:#f3f6ec;
-        --olive-100:#e6edd8;
-        --olive-200:#d9e4c4;
-      }
-      .table-wrap-procesos{
-        overflow:hidden;
-        box-shadow:0 6px 18px rgba(111, 96, 96, 0.06);
-      }
-      .table-procesos thead th{
-        position:sticky; top:0; z-index:1;
-        background:linear-gradient(180deg, var(--olive), #5f663a);
-        color:#fff; text-transform:uppercase; letter-spacing:.3px;
-        border:none!important;
-      }
-      .table-procesos td, .table-procesos th{
-        padding:.85rem 1rem!important; vertical-align:middle;
-      }
-      .table-procesos tbody tr{ transition:transform .08s ease, background-color .12s ease; }
-      .table-procesos tbody tr:hover{ background:var(--olive-50); transform:scale(1.002); }
-      .chip-nro{
-        display:inline-block; min-width:2.1rem; text-align:center;
-        padding:.25rem .55rem; border-radius:999px; font-weight:700;
-        background:var(--olive-100); color:#37401b; border:1px solid var(--olive-200);
-      }
-      .badge-soft{
-        background:var(--olive-50); color:#3b431c; font-weight:600;
-        border:1px solid var(--olive-200);
-      }
-      .acciones .btn{ border-radius:10px; }
-    </style>
+:root{
+  --olive-dark1:#556B2F;
+  --olive1:#6C7A3D;
+  --brown:#5D4037;
+  --gold:#F3AF43;
+  --cream:#FFF8E1;
+  --line:rgba(0,0,0,.08);
+  --ink:#1f2937;
+}
+
+/* ====== ENCABEZADO ====== */
+.section-title{
+  font-weight:800; font-size:1.25rem;
+  color: var(--brown);
+  margin-bottom:1rem;
+  display:flex; align-items:center; gap:.5rem;
+}
+.section-title::before{
+  content:""; width:10px; height:10px; border-radius:3px;
+  background:var(--gold); box-shadow:0 0 0 3px rgba(243,175,67,.25);
+}
+
+/* ====== FILTROS ====== */
+.form-label{ font-weight:700; color: var(--olive-dark1); }
+.form-select, .form-control{
+  border-radius:10px;
+  border:1px solid var(--line);
+  box-shadow:none;
+}
+.form-select:focus, .form-control:focus{
+  border-color: var(--olive1);
+  box-shadow:0 0 0 .15rem rgba(108,122,61,.25);
+}
+
+/* ====== BOTONES ====== */
+.btn-success{
+  background: var(--olive1);
+  border:none;
+  font-weight:600;
+  border-radius:10px;
+}
+.btn-success:hover{ filter:brightness(.95); }
+
+/* ====== TABLA ====== */
+.table-procesos thead th{
+  background: linear-gradient(180deg, var(--olive-dark1), var(--olive1));
+  color:#fff; border:5;
+  letter-spacing:.5px; font-weight:700;
+}
+.table-procesos tbody tr:hover{ background: rgba(255,248,225,.6); }
+.chip-nro{
+  display:inline-block; min-width:2.1rem; text-align:center;
+  padding:.25rem .55rem; border-radius:999px; font-weight:700;
+  background: var(--cream); color: var(--brown);
+  border:1px solid var(--line);
+}
+.badge-soft{
+  background: rgba(243,175,67,.12); color: var(--brown);
+  border:1px solid rgba(243,175,67,.25);
+  border-radius:999px; padding:.2rem .6rem;
+  font-weight:600;
+}
+
+/* ====== MODAL ====== */
+.modal-content{ border-radius:16px; border:1px solid var(--line); }
+.modal-header{
+  background: var(--brown); color:#fff;
+  border-top-left-radius:16px; border-top-right-radius:16px;
+}
+.modal-header .btn-close{ filter:invert(1); }
+.modal-footer .btn-success{
+  background: var(--olive); border:none;
+}
+.modal-footer .btn-secondary{
+  background: #e5e5e5; color:#333;
+}
+.alert-info{
+  background: rgba(108,122,61,.1); color: var(--olive-dark1);
+  border:1px solid rgba(108,122,61,.3);
+}
+.alert-warning{ border-radius:10px; }
+
+/* Bordes redondeados en la tabla */
+.table-procesos {
+  border-radius: 10px;
+  overflow: hidden; /* para que las esquinas redondeadas corten el fondo de thead */
+}
+.table-wrap-procesos, 
+.table-responsive {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+</style>
 
     <div class="card mb-3">
       <div class="card-header fw-semibold d-flex align-items-center gap-2">

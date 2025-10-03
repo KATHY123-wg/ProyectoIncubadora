@@ -30,6 +30,9 @@ class VentaForm extends Component
     public int  $focusIndex = -1;
     public bool $showSug    = false;
 
+    public $ventaGuardadaId = null;
+
+
     public function mount()
     {
         // Fecha por defecto La Paz, Bolivia
@@ -64,15 +67,15 @@ class VentaForm extends Component
             ->where('rol', 'avicultor')
             ->where(function ($w) use ($txt) {
                 $w->where(DB::raw("CONCAT_WS(' ', nombre, apellido1, COALESCE(apellido2,''))"), 'like', "%{$txt}%")
-                  ->orWhere('usuario', 'like', "%{$txt}%")
-                  ->orWhere('ci_nit',  'like', "%{$txt}%");
+                    ->orWhere('usuario', 'like', "%{$txt}%")
+                    ->orWhere('ci_nit',  'like', "%{$txt}%");
             })
             ->orderBy('nombre')->orderBy('apellido1')
             ->limit(8)
-            ->get(['id','nombre','apellido1','apellido2','ci_nit','usuario']);
+            ->get(['id', 'nombre', 'apellido1', 'apellido2', 'ci_nit', 'usuario']);
 
         $this->sugerencias = $rows->map(function ($u) {
-            $nombre = trim($u->nombre.' '.$u->apellido1.' '.($u->apellido2 ?? ''));
+            $nombre = trim($u->nombre . ' ' . $u->apellido1 . ' ' . ($u->apellido2 ?? ''));
             $extra  = $u->ci_nit ?: $u->usuario;
             return [
                 'id'    => (int)$u->id,
@@ -97,8 +100,8 @@ class VentaForm extends Component
         $u = User::where('rol', 'avicultor')->findOrFail($id);
 
         $this->avicultor_id     = $u->id;
-        $this->nombre_avicultor = trim($u->nombre.' '.$u->apellido1.' '.($u->apellido2 ?? ''));
-        $this->buscador         = $this->nombre_avicultor.($u->ci_nit ? " ({$u->ci_nit})" : '');
+        $this->nombre_avicultor = trim($u->nombre . ' ' . $u->apellido1 . ' ' . ($u->apellido2 ?? ''));
+        $this->buscador         = $this->nombre_avicultor . ($u->ci_nit ? " ({$u->ci_nit})" : '');
 
         $this->sugerencias = [];
         $this->showSug     = false;
@@ -140,14 +143,14 @@ class VentaForm extends Component
         $txt = trim($this->buscador);
         if ($txt === '') return;
 
-        $match = User::where('rol','avicultor')
+        $match = User::where('rol', 'avicultor')
             ->where(function ($w) use ($txt) {
                 $w->whereRaw("TRIM(CONCAT(nombre,' ',apellido1,' ',COALESCE(apellido2,''))) = ?", [$txt])
-                  ->orWhere('ci_nit', $txt)
-                  ->orWhere('usuario', $txt);
+                    ->orWhere('ci_nit', $txt)
+                    ->orWhere('usuario', $txt);
             })
             ->limit(2)
-            ->get(['id','nombre','apellido1','apellido2']);
+            ->get(['id', 'nombre', 'apellido1', 'apellido2']);
 
         if ($match->count() === 1) {
             $this->seleccionarAvicultor($match->first()->id);
@@ -155,8 +158,8 @@ class VentaForm extends Component
     }
 
     /** Guardar la venta (1 incubadora por venta) */
-        /** Guardar la venta (1 incubadora por venta) */
- public function guardar()
+    /** Guardar la venta (1 incubadora por venta) */
+    public function guardar()
     {
         // intenta resolver el avicultor automáticamente si coincide exacto
         $this->ensureAvicultorSeleccionado();
@@ -182,7 +185,8 @@ class VentaForm extends Component
             return;
         }
 
-        DB::transaction(function () {
+        // --- Aquí: usamos &$venta para poder usar la venta fuera de la closure ---
+        DB::transaction(function () use (&$venta) {
             // 1) Venta
             $venta = Venta::create([
                 'avicultor_id'   => $this->avicultor_id,
@@ -208,53 +212,74 @@ class VentaForm extends Component
                 'modificado_por' => Auth::id(),
             ]);
         });
+        if (isset($venta) && $venta instanceof \App\Models\Venta) {
+            $this->ventaGuardadaId = $venta->id;
+        }
 
         // refrescar combo
         $this->reset(['incubadora_id']);
         $this->incubadoras = Incubadora::whereNull('usuario_id')
             ->where('estado', 0)
-            ->orderBy('codigo')->get(['id','codigo'])->toArray();
-       $this->resetFormularioVenta();
+            ->orderBy('codigo')->get(['id', 'codigo'])->toArray();
+        $this->resetFormularioVenta();
 
+        // <-- aquí mantenemos tu toast existente -->
         $this->dispatch('toast', [
-        'tipo' => 'success',
-        'msg'  => 'Se vendió correctamente la incubadora'
-]);
+            'tipo' => 'success',
+            'msg'  => 'Se vendió correctamente la incubadora'
+        ]);
 
+        // --- NUEVO: generar URL de la factura y avisar al navegador ---
+        if (isset($venta) && $venta instanceof \App\Models\Venta) {
+            // Genera la URL a la ruta nombrada 'ventas.factura'
+            // Asegúrate de tener la ruta route('ventas.factura', ['venta' => $venta->id])
+            try {
+                $urlRecibo = route('ventas.recibo', ['venta' => $venta->id]);
+                $this->dispatchBrowserEvent('venta-guardada', [
+                    'message' => ' Se vendió correctamente la incubadora',
+                    'url'     => $urlRecibo,
+                ]);
+                $this->ventaGuardadaId = $venta->id;
+            } catch (\Throwable $e) {
+                // Si por alguna razón route() falla, no rompemos nada: solo logueamos (opcional)
+                // \Log::error('Error generando URL factura', ['e' => $e->getMessage()]);
+            }
+        }
     }
+
+
     public function render()
     {
         return view('livewire.admin.venta-form');
     }
     private function resetFormularioVenta()
-{
-    // Limpia estado del formulario
-    $this->reset([
-        'buscador',
-        'showSug',
-        'sugerencias',
-        'focusIndex',
-        'avicultor_id',
-        'nombre_avicultor',
-        'incubadora_id',
-        'precio_bs',
-    ]);
+    {
+        // Limpia estado del formulario
+        $this->reset([
+            'buscador',
+            'showSug',
+            'sugerencias',
+            'focusIndex',
+            'avicultor_id',
+            'nombre_avicultor',
+            'incubadora_id',
+            'precio_bs',
+        ]);
 
-    // Fecha: déjala en "ahora" (o ponla en '' si prefieres vacía)
-    $this->fecha_venta = now()->format('Y-m-d\TH:i');
+        // Fecha: déjala en "ahora" (o ponla en '' si prefieres vacía)
+        $this->fecha_venta = now()->format('Y-m-d\TH:i');
 
-    // Refresca combo de incubadoras libres
-    $this->incubadoras = Incubadora::whereNull('usuario_id')
-        ->where('estado', 0)
-        ->orderBy('codigo')
-        ->get(['id','codigo'])
-        ->toArray();
+        // Refresca combo de incubadoras libres
+        $this->incubadoras = Incubadora::whereNull('usuario_id')
+            ->where('estado', 0)
+            ->orderBy('codigo')
+            ->get(['id', 'codigo'])
+            ->toArray();
 
-    // Limpia mensajes de validación
-    $this->resetValidation();
+        // Limpia mensajes de validación
+        $this->resetValidation();
 
-    // Enfoca el buscador otra vez
-    $this->dispatch('focus', ['id' => 'inputBuscadorAvicultor']);
-}
-
+        // Enfoca el buscador otra vez
+        $this->dispatch('focus', ['id' => 'inputBuscadorAvicultor']);
+    }
 }

@@ -119,7 +119,7 @@
             <label class="form-label">Incubadora (no asignada)</label>
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-cpu"></i></span>
-              <select class="form-select" wire:model="incubadora_id">
+              <select class="form-select" wire:model.live="incubadora_id">
                 <option value="">— Seleccione —</option>
                 @foreach($incubadoras as $i)
                   <option value="{{ $i['id'] }}">{{ $i['codigo'] }}</option>
@@ -191,6 +191,18 @@
         <span wire:loading wire:target="guardar" class="spinner-border spinner-border-sm me-2"></span>
         <i class="bi bi-check2-circle me-1"></i> Guardar
       </button>
+  {{-- Botón Descargar recibo (solo si ya existe una venta) --}}
+      @if($ventaGuardadaId)
+        <form action="{{ route('ventas.recibo', ['venta' => $ventaGuardadaId]) }}" method="GET" class="d-inline me-2">
+            <button type="submit" class="btn btn-outline-primary btn-cta">
+                <i class="bi bi-filetype-pdf me-1"></i> Descargar Recibo
+            </button>
+        </form>
+      @endif
+
+
+
+
     </div>
   </div>
   <div id="toastContainer"
@@ -254,6 +266,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
+{{--factura de venta--}}
+<script>
+window.addEventListener('venta-guardada', event => {
+    const url = event.detail.url;
+    const msg = event.detail.message ?? 'Venta guardada';
+    // mostrar toast (si ya tienes toast con Livewire, puedes usarlo)
+    // Abrir factura en nueva pestaña
+    if (url) {
+        window.open(url, '_blank'); // abrir en nueva pestaña
+    } else {
+        alert(msg);
+    }
+});
+</script>
+
 @endpush
 
 </div>

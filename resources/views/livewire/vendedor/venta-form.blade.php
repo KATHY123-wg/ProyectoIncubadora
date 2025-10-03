@@ -119,7 +119,7 @@
             <label class="form-label">Incubadora (no asignada)</label>
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-cpu"></i></span>
-              <select class="form-select" wire:model="incubadora_id">
+              <select class="form-select" wire:model.live="incubadora_id">
                 <option value="">— Seleccione —</option>
                 @foreach($incubadoras as $i)
                   <option value="{{ $i['id'] }}">{{ $i['codigo'] }}</option>

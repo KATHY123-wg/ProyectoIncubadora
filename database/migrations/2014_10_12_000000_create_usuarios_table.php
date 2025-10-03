@@ -27,7 +27,6 @@ return new class extends Migration
 
             $table->enum('rol', ['admin', 'avicultor', 'vendedor'])->default('avicultor');
             $table->tinyInteger('estado')->default(1);
-            
 
             // Campos de tiempo en español
             $table->timestamp('fecha_registro')->useCurrent();

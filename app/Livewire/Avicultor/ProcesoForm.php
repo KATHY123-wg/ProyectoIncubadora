@@ -100,7 +100,7 @@ class ProcesoForm extends Component
         $this->mostrarFormulario = true;
         $this->modoEdicion = false;
         $this->resetValidation();
-        $this->reset(['cantidad_total_huevos','observaciones','fecha_eclosion_estimada']);
+        $this->reset(['cantidad_total_huevos', 'observaciones', 'fecha_eclosion_estimada']);
 
         // nombre sugerido tipo “PROCESO N”
         $this->nombre = $this->sugerirNombre();
@@ -117,7 +117,7 @@ class ProcesoForm extends Component
         $this->modoEdicion = false;
         $this->proceso_id = null;
 
-        $this->reset(['nombre','fecha_inicio','cantidad_total_huevos','observaciones','fecha_eclosion_estimada']);
+        $this->reset(['nombre', 'fecha_inicio', 'cantidad_total_huevos', 'observaciones', 'fecha_eclosion_estimada']);
         $this->fecha_inicio = now()->format('Y-m-d\TH:i');
         $this->resetValidation();
 
@@ -137,7 +137,7 @@ class ProcesoForm extends Component
 
         $this->validate([
             'incubadora_id' => 'required|exists:incubadoras,id',
-            'nombre'        => ['required','string','max:50','not_regex:/^\s*$/','regex:/^(?=.*\S)[A-Z0-9\s\-\._]+$/'],
+            'nombre'        => ['required', 'string', 'max:50', 'not_regex:/^\s*$/', 'regex:/^(?=.*\S)[A-Z0-9\s\-\._]+$/'],
             'fecha_inicio'  => [
                 'required',
                 'date',
@@ -154,7 +154,7 @@ class ProcesoForm extends Component
                 },
             ],
             // entero 1..35 (sin 0, sin negativos, sin decimales)
-            'cantidad_total_huevos' => ['required','integer','between:1,35'],
+            'cantidad_total_huevos' => ['required', 'integer', 'between:1,35'],
             'observaciones'         => 'nullable|string'
         ]);
 
@@ -219,7 +219,7 @@ class ProcesoForm extends Component
 
         $this->validate([
             'incubadora_id' => 'required|exists:incubadoras,id',
-            'nombre'        => ['required','string','max:50','not_regex:/^\s*$/','regex:/^(?=.*\S)[A-Z0-9\s\-\._]+$/'],
+            'nombre'        => ['required', 'string', 'max:50', 'not_regex:/^\s*$/', 'regex:/^(?=.*\S)[A-Z0-9\s\-\._]+$/'],
             'fecha_inicio'  => [
                 'required',
                 'date',
@@ -236,7 +236,7 @@ class ProcesoForm extends Component
                 },
             ],
             // entero 1..35
-            'cantidad_total_huevos' => ['required','integer','between:1,35'],
+            'cantidad_total_huevos' => ['required', 'integer', 'between:1,35'],
             'observaciones'         => 'nullable|string'
         ]);
 

@@ -22,19 +22,19 @@ class ReporteProcesosAdmin extends Component
     }
 
     public function cargarIncubadoras()
-{
-    $this->incubadora_id = '';
+    {
+        $this->incubadora_id = '';
 
-    if (empty($this->usuarioId)) {
-        $this->incubadoras = [];
-        $this->dispatch('alerta', mensaje: 'Primero selecciona un usuario.');
-        return;
+        if (empty($this->usuarioId)) {
+            $this->incubadoras = [];
+            $this->dispatch('alerta', mensaje: 'Primero selecciona un usuario.');
+            return;
+        }
+
+        $this->incubadoras = Incubadora::where('usuario_id', (int)$this->usuarioId)
+            ->orderBy('codigo')
+            ->get();
     }
-
-    $this->incubadoras = Incubadora::where('usuario_id', (int)$this->usuarioId)
-        ->orderBy('codigo')
-        ->get();
-}
     public function updatedUsuarioId($value)
     {
         // Validar que el valor llegue

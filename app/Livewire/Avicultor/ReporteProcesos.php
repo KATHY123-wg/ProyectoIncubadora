@@ -26,9 +26,18 @@ class ReporteProcesos extends Component
         $this->procesos = [];
     }
 
-    public function updatedIncubadoraId() { $this->generar(); }
-    public function updatedGestion()      { $this->generar(); }
-    public function updatedMes()          { $this->generar(); }
+    public function updatedIncubadoraId()
+    {
+        $this->generar();
+    }
+    public function updatedGestion()
+    {
+        $this->generar();
+    }
+    public function updatedMes()
+    {
+        $this->generar();
+    }
 
     public function generar()
     {
@@ -58,8 +67,8 @@ class ReporteProcesos extends Component
                 SUM(CASE WHEN error_foco =1 THEN 1 ELSE 0 END) AS lampara,
                 SUM(CASE WHEN error_sensor=1 THEN 1 ELSE 0 END) AS sensor
             ")
-            ->where('proceso_id', $proceso->id)
-            ->first();
+                ->where('proceso_id', $proceso->id)
+                ->first();
 
             return [
                 'codigo_incubadora'   => $proceso->incubadora->codigo ?? '-',

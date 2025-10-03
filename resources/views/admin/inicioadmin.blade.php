@@ -11,10 +11,10 @@
 
         <div style="font-size: 14px; margin-top: 8px; color: #5D4037; font-weight: bold;">
              <a href="#" data-bs-toggle="modal" data-bs-target="#modalPerfil"
-                onclick="event.preventDefault();"
-                style="text-decoration:none; color:#f3af43; font-weight:bold; font-size:14px;">
-                👤 {{ Auth::user()->nombre }}
-            </a>
+            onclick="event.preventDefault();"
+            style="text-decoration:none; color:#5D4037; font-weight:bold; font-size:14px;">
+            👤 {{ Auth::user()->nombre }}
+        </a>
          </div>
     </div>
 
@@ -56,7 +56,7 @@
 @endsection
 
 @section('contenido')
-@livewire('perfil.edit')
+ 
 
 <div id="bgVideoWrap" aria-hidden="true">
   <video

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Livewire\Avicultor;
+
 use Livewire\Component;
 use Asantibanez\LivewireCharts\Models\LineChartModel;
 
@@ -23,15 +24,15 @@ class AvicultorGraficos extends Component
     }
 
     public function generarDatos()
-{
-    if (!$this->incubadoraId || !$this->gestion || !$this->mes) {
-        $this->lineChartManana = null;
-        $this->lineChartNoche = null;
-        return;
-    }
+    {
+        if (!$this->incubadoraId || !$this->gestion || !$this->mes) {
+            $this->lineChartManana = null;
+            $this->lineChartNoche = null;
+            return;
+        }
 
-    $this->actualizarGraficos();
-}
+        $this->actualizarGraficos();
+    }
 
 
     public function actualizarGraficos()
@@ -85,57 +86,55 @@ class AvicultorGraficos extends Component
     }
 
     public function render()
-{
-    $lineChartManana = $this->crearGrafico('manana');
-    $lineChartNoche = $this->crearGrafico('noche');
+    {
+        $lineChartManana = $this->crearGrafico('manana');
+        $lineChartNoche = $this->crearGrafico('noche');
 
-    return view('livewire.avicultor.avicultor-graficos', [
-        'lineChartManana' => $lineChartManana,
-        'lineChartNoche' => $lineChartNoche,
-    ]);
-}
-public function crearGrafico($turno)
-{
-    $procesoId = Incubacion::where('incubadora_id', $this->incubadoraId)
-        ->whereHas('incubadora', fn($q) => $q->where('usuario_id', auth()->id()))
-        ->value('id');
+        return view('livewire.avicultor.avicultor-graficos', [
+            'lineChartManana' => $lineChartManana,
+            'lineChartNoche' => $lineChartNoche,
+        ]);
+    }
+    public function crearGrafico($turno)
+    {
+        $procesoId = Incubacion::where('incubadora_id', $this->incubadoraId)
+            ->whereHas('incubadora', fn($q) => $q->where('usuario_id', auth()->id()))
+            ->value('id');
 
-    if (!$procesoId || !$this->gestion || !$this->mes) return null;
+        if (!$procesoId || !$this->gestion || !$this->mes) return null;
 
-    $lecturas = Lectura_Sensores::where('proceso_id', $procesoId)
-        ->whereYear('fecha_hora', $this->gestion)
-        ->whereMonth('fecha_hora', $this->mes)
-        ->get();
+        $lecturas = Lectura_Sensores::where('proceso_id', $procesoId)
+            ->whereYear('fecha_hora', $this->gestion)
+            ->whereMonth('fecha_hora', $this->mes)
+            ->get();
 
-    $puntos = [];
+        $puntos = [];
 
-    foreach ($lecturas as $lectura) {
-        $hora = date('H:i', strtotime($lectura->fecha_hora));
-        $punto = [
-            'hora' => date('d H:i', strtotime($lectura->fecha_hora)),
-            'temperatura' => $lectura->temperatura,
-        ];
+        foreach ($lecturas as $lectura) {
+            $hora = date('H:i', strtotime($lectura->fecha_hora));
+            $punto = [
+                'hora' => date('d H:i', strtotime($lectura->fecha_hora)),
+                'temperatura' => $lectura->temperatura,
+            ];
 
-        if (
-            ($turno === 'manana' && $hora >= '06:00' && $hora < '12:00') ||
-            ($turno === 'noche' && $hora >= '18:00' && $hora <= '23:59')
-        ) {
-            $puntos[] = $punto;
+            if (
+                ($turno === 'manana' && $hora >= '06:00' && $hora < '12:00') ||
+                ($turno === 'noche' && $hora >= '18:00' && $hora <= '23:59')
+            ) {
+                $puntos[] = $punto;
+            }
         }
+
+        $titulo = $turno === 'manana' ? 'Temperatura Mañana' : 'Temperatura Noche';
+
+        $chart = (new LineChartModel())
+            ->setTitle($titulo)
+            ->setAnimated(true);
+
+        foreach ($puntos as $p) {
+            $chart->addPoint($p['hora'], $p['temperatura']);
+        }
+
+        return $chart;
     }
-
-    $titulo = $turno === 'manana' ? 'Temperatura Mañana' : 'Temperatura Noche';
-
-    $chart = (new LineChartModel())
-        ->setTitle($titulo)
-        ->setAnimated(true);
-
-    foreach ($puntos as $p) {
-        $chart->addPoint($p['hora'], $p['temperatura']);
-    }
-
-    return $chart;
-}
-
-
 }

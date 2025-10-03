@@ -1,16 +1,116 @@
 <div class="container-fluid py-3">
-    <style>
-        :root{
-            --olive:#5D4037; --bg:#FFF8E1; --card:#FFFFFF; --ink:#1f2937; --muted:#6b7280;
-        }
-        .kpi-card{background:var(--card);border:1px solid #eee;border-radius:14px;padding:18px;box-shadow:0 8px 20px rgba(0,0,0,.05);height:100%;}
-        .kpi-label{color:var(--muted);font-size:.9rem;}
-        .kpi-value{font-size:1.6rem;font-weight:800;color:var(--ink);}
-        .section-card{background:var(--card);border:1px solid #eee;border-radius:14px;box-shadow:0 8px 20px rgba(0,0,0,.05);}
-        .section-title{font-weight:700;color:var(--ink);}
-        .badge-soft{background:#eef2ff;color:#3b82f6;border:1px solid #dbeafe;font-weight:600;}
-        .table thead th{background:#f9fafb;font-weight:600;}
-    </style>
+   <style>
+    /* ===== Paleta coherente con tu app ===== */
+    :root{
+        --olive-dark1: #556B2F;  /* encabezados/acentos oscuros */
+        --olive1:      #6C7A3D;  /* base sidebar / bordes */
+        --brown:      #5D4037;  /* marrón de marca */
+        --gold:       #F3AF43;  /* dorado de acento */
+        --cream:      #FFF8E1;  /* fondo cálido */
+        --ink:        #1f2937;  /* texto */
+        --muted:      #6b7280;  /* texto suave */
+        --card:       #FFFFFF;  /* superficies */
+        --line:       rgba(0,0,0,.06);
+    }
+
+    /* fondo general más cálido (opcional, contenedor actual) */
+    .container-fluid{ background: linear-gradient(180deg, #fff 0%, var(--cream) 100%); border-radius: 12px; }
+
+    /* ===== Tarjetas KPI ===== */
+    .kpi-card{
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 18px;
+        box-shadow: 0 10px 24px rgba(0,0,0,.06);
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    /* banda de color arriba */
+    .kpi-card::before{
+        content:""; position:absolute; inset:0 0 auto 0; height:6px;
+        background: linear-gradient(90deg, var(--olive-dark1), var(--olive1), var(--gold));
+    }
+    /* burbuja decorativa */
+    .kpi-card::after{
+        content:""; position:absolute; right:-30px; bottom:-30px; width:120px; height:120px;
+        border-radius: 50%;
+        background: radial-gradient(closest-side, rgba(243,175,67,.18), transparent 70%);
+    }
+    .kpi-label{ color: var(--muted); font-size:.9rem; letter-spacing:.2px; }
+    .kpi-value{ font-size:1.7rem; font-weight:800; color: var(--ink); }
+
+    /* ===== Secciones ===== */
+    .section-card{
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: 0 10px 24px rgba(0,0,0,.06);
+        position: relative;
+    }
+    /* borde superior de color */
+    .section-card::before{
+        content:""; position:absolute; inset:0 0 auto 0; height:4px;
+        background: linear-gradient(90deg, var(--brown), var(--olive));
+        border-top-left-radius:14px; border-top-right-radius:14px;
+    }
+    .section-title{
+        font-weight: 800; color: var(--brown);
+        display: inline-flex; align-items: center; gap:.5rem;
+    }
+    .section-title::before{
+        content:""; width:10px; height:10px; border-radius:3px; background: var(--gold);
+        box-shadow: 0 0 0 3px rgba(243,175,67,.25);
+    }
+
+    /* ===== Badges ===== */
+    .badge-soft{
+        background: rgba(243,175,67,.12);
+        color: var(--brown);
+        border: 1px solid rgba(243,175,67,.35);
+        font-weight: 700;
+        border-radius: 999px;
+        padding: .25rem .55rem;
+        min-width: 36px; text-align: center;
+    }
+    /* armonizar los de estado Bootstrap */
+    .badge.text-bg-success{
+        background: linear-gradient(180deg, #88b04b, #6C7A3D) !important;
+        color:#fff !important; border:0 !important;
+        box-shadow: 0 4px 10px rgba(108,122,61,.25);
+    }
+    .badge.text-bg-warning{
+        background: linear-gradient(180deg, #ffd36a, var(--gold)) !important;
+        color:#5b3e14 !important; border:0 !important;
+        box-shadow: 0 4px 10px rgba(243,175,67,.25);
+    }
+
+    /* ===== Tabla ===== */
+    .table thead th{
+        background: linear-gradient(180deg, var(--olive-dark1), var(--olive1));
+        color:#fff; font-weight:700; letter-spacing:.2px;
+        border-bottom: 0;
+    }
+    .table tbody tr:hover{ background: rgba(255,248,225,.5); }
+    .table td, .table th{ vertical-align: middle; }
+
+    /* ===== Chart wrapper ===== */
+    #chart-ventas{
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.4);
+    }
+
+    /* ===== List group (top incubadoras) ===== */
+    .list-group-item{
+        border: 1px solid var(--line) !important;
+    }
+    .list-group-item:hover{
+        background: rgba(108,122,61,.06);
+    }
+</style>
 
     {{-- KPIs --}}
     <div class="row g-3">

@@ -7,5 +7,3 @@ use App\Http\Controllers\LecturaSensorController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
-

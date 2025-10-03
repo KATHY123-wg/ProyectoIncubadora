@@ -8,25 +8,26 @@ use Illuminate\Database\Eloquent\Model;
 class Incubadora extends Model
 {
     use HasFactory;
-    
-   
+
+
     // Usa tus timestamps en español
+    protected $connection = 'mysql_always'; 
     const CREATED_AT = 'fecha_registro';
     const UPDATED_AT = 'ultima_actualizacion';
     public $timestamps = false;
-        protected $table = 'incubadoras'; // nombre de la tabla en BD si no sigue la convención
+    protected $table = 'incubadoras'; // nombre de la tabla en BD si no sigue la convención
 
     protected $fillable = [
-      'codigo',
-      'descripcion',
-      'usuario_id',
-      'estado',
-      'fecha_registro',
-      'ultima_actualizacion',
-      'modificado_por',
-   ];
-   
-       protected $casts = [
+        'codigo',
+        'descripcion',
+        'usuario_id',
+        'estado',
+        'fecha_registro',
+        'ultima_actualizacion',
+        'modificado_por',
+    ];
+
+    protected $casts = [
         'estado' => 'integer',
         'usuario_id' => 'integer',
         'modificado_por' => 'integer',
@@ -44,8 +45,8 @@ class Incubadora extends Model
     }
 
 
-   
- 
+
+
     // Relación: esta incubadora puede estar en muchos detalles de venta
     public function detallesVenta()
     {
@@ -63,5 +64,4 @@ class Incubadora extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
-  
 }

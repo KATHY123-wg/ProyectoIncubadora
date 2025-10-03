@@ -51,7 +51,7 @@ class ReporteVentasAdmin extends Component
         });
 
         // Construimos 12 puntos (meses) para el gráfico, aunque algún mes no tenga ventas
-        $mesesCortos = [1=>'Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+        $mesesCortos = [1 => 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
         $labels = [];
         $montos = [];
 

@@ -111,4 +111,46 @@
     });
     </script>
     @endpush
+   @if (session('mostrar_modal_credenciales'))
+    @push('scripts')
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const el   = document.getElementById('modalPerfil');
+        const modo = @json(session('mostrar_modal_credenciales')); // 'forzado' | 'recordatorio'
+        if (!el) return;
+
+        // Avisar al componente Livewire en qué modo estamos (v3 y v2)
+        if (window.Livewire) {
+          if (typeof Livewire.dispatch === 'function') {
+            Livewire.dispatch('set-modo', { modo: modo });     // v3
+          } else if (typeof Livewire.emit === 'function') {
+            Livewire.emit('set-modo', { modo: modo });         // v2
+          }
+        }
+
+        // Configurar el modal según modo
+        const modal = new bootstrap.Modal(el, {
+          backdrop: (modo === 'forzado') ? 'static' : true,
+          keyboard: (modo === 'forzado') ? false : true
+        });
+        modal.show();
+
+        // Si es recordatorio y se cierra sin guardar → marcar revisión del mes
+        el.addEventListener('hidden.bs.modal', function () {
+          if (modo === 'recordatorio' && window.Livewire) {
+            if (typeof Livewire.dispatch === 'function') {
+              Livewire.dispatch('revision-credenciales-ok');   // v3
+            } else if (typeof Livewire.emit === 'function') {
+              Livewire.emit('revision-credenciales-ok');       // v2
+            }
+          }
+        });
+
+        // Ocultar botón "Cancelar" en modo forzado
+        const btnCancelar = el.querySelector('.modal-footer .btn.btn-secondary');
+        if (btnCancelar) btnCancelar.classList.toggle('d-none', (modo === 'forzado'));
+    });
+    </script>
+    @endpush
+@endif
 </div>

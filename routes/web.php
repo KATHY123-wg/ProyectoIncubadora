@@ -8,9 +8,10 @@ use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\UsuarioController;
 use App\Models\Incubadora;
-use App\Livewire\Admin\Usuarios\UsuarioForm;
 use App\Livewire\Admin\IncubadorasAdmin;
 use App\Http\Controllers\CaptchaController;
+use App\Http\Controllers\ExportController;
+use App\Http\Controllers\ReportesPVExportController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -42,6 +43,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/procesos', [AvicultorController::class, 'ciclos'])->name('avicultor.procesos');
         Route::get('/nosotros', [AvicultorController::class, 'nosotros'])->name('avicultor.nosotros');
         Route::get('/lecturas-por-incubadora/{incubadoraId}', [AvicultorController::class, 'lecturasPorIncubadora']);
+        // routes/web.php (dentro del middleware 'auth' + 'role:avicultor')
+        Route::get('/metrics', [AvicultorController::class, 'metrics'])->name('avicultor.metrics');
+
     });
 
     // Rutas para vendedor
@@ -133,3 +137,44 @@ Route::middleware(['auth','role:admin'])->group(function () {
         ->name('usuarios.asignar-incubadora');
 });
 */
+Route::get('/ventas/{venta}/recibo', [VentaController::class, 'recibo'])->name('ventas.recibo');
+///
+
+
+Route::middleware(['auth'])->group(function () {
+    // Usuarios
+    Route::get('/reportes/usuarios/pdf', [ExportController::class, 'usuariosPDF'])->name('reportes.usuarios.pdf');
+    Route::get('/reportes/usuarios/csv', [ExportController::class, 'usuariosCSV'])->name('reportes.usuarios.csv');
+    Route::get('/reportes/usuarios/xls', [ExportController::class, 'usuariosXLS'])->name('reportes.usuarios.xls');
+
+    // Incubadoras
+    Route::get('/reportes/incubadoras/pdf', [ExportController::class, 'incubadorasPDF'])->name('reportes.incubadoras.pdf');
+    Route::get('/reportes/incubadoras/csv', [ExportController::class, 'incubadorasCSV'])->name('reportes.incubadoras.csv');
+    Route::get('/reportes/incubadoras/xls', [ExportController::class, 'incubadorasXLS'])->name('reportes.incubadoras.xls');
+});
+
+Route::get('/ping', fn () => 'ok');
+
+//////////////////////[reportes ventas y procesos]
+
+Route::middleware(['auth'])->group(function () {
+    // PROCESOS
+    Route::get('/admin/reportes/procesos/export/pdf', [ReportesPVExportController::class, 'procesosPDF'])
+        ->name('reportes.procesos.pdf');
+    Route::get('/admin/reportes/procesos/export/xls', [ReportesPVExportController::class, 'procesosXLS'])
+        ->name('reportes.procesos.xls');
+
+    // VENTAS
+    Route::get('/admin/reportes/ventas/export/pdf', [ReportesPVExportController::class, 'ventasPDF'])
+        ->name('reportes.ventas.pdf');
+    Route::get('/admin/reportes/ventas/export/xls', [ReportesPVExportController::class, 'ventasXLS'])
+        ->name('reportes.ventas.xls');
+});
+Route::middleware(['auth','role:avicultor'])->group(function () {
+    Route::get('/avicultor/reportes/procesos/pdf', [ReportesPVExportController::class, 'avicultorProcesosPDF'])
+        ->name('avicultor.procesos.pdf');
+
+    Route::get('/avicultor/reportes/procesos/xls', [ReportesPVExportController::class, 'avicultorProcesosXLS'])
+        ->name('avicultor.procesos.xls');
+});
+

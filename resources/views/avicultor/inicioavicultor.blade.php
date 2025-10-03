@@ -41,71 +41,42 @@
 
     <h4 class="fw-bold mb-4">PROCESO ACTUAL DE INCUBACIÓN</h4>
 
-    @php
-        use Carbon\Carbon;
+@php
+    // Valores por defecto si vienen null
+    $vTemp = isset($temp) ? number_format($temp, 1).' °C' : '—';
+    $vHum  = isset($hum)  ? number_format($hum, 1).' %'  : '—';
+    $vDR   = isset($diasRestantes) ? ($diasRestantes.' días') : '—';
+    $vDT   = isset($diasTranscurridos) ? $diasTranscurridos : '—';
 
-        // Valores por defecto
-        $diasRestantes = null;
-        $diasTranscurridos = null;
+    $cards = [
+        ['title' => 'TEMPERATURA',      'value' => $vTemp, 'icon' => 'bi-thermometer-high', 'color' => '#FF5252', 'id' => 'card-temp'],
+        ['title' => 'HUMEDAD',          'value' => $vHum,  'icon' => 'bi-droplet-half',     'color' => '#42A5F5', 'id' => 'card-hum'],
+        ['title' => 'DÍAS RESTANTES',   'value' => $vDR,   'icon' => 'bi-hourglass-split',  'color' => 'navbar',  'id' => 'card-rest'],
+        ['title' => 'DÍA DE INCUBACIÓN','value' => $vDT,   'icon' => 'bi-calendar-check',   'color' => 'navbar',  'id' => 'card-dia'],
+    ];
+@endphp
 
-        // Lee datos del proceso si existen:
-        // Espera: $procesoActual->fecha_inicio (datetime)
-        //         y (fecha_fin_estimada datetime) o (duracion_dias int)
-        if (isset($procesoActual)) {
-            $now = Carbon::now();
-            $inicio = !empty($procesoActual->fecha_inicio) ? Carbon::parse($procesoActual->fecha_inicio) : null;
-
-            // Determina fecha fin
-            if (!empty($procesoActual->fecha_fin_estimada)) {
-                $fin = Carbon::parse($procesoActual->fecha_fin_estimada);
-            } elseif ($inicio && !empty($procesoActual->duracion_dias)) {
-                $fin = $inicio->copy()->addDays((int)$procesoActual->duracion_dias);
-            } else {
-                $fin = null;
-            }
-
-            if ($inicio) {
-                // Días transcurridos desde que inició
-                $diasTranscurridos = $inicio->diffInDays($now);
-            }
-
-            if ($fin) {
-                // Días restantes hasta la fecha fin (no negativos)
-                $dif = $now->diffInDays($fin, false); // negativo si ya pasó
-                $diasRestantes = $dif > 0 ? $dif : 0;
-            }
-        }
-
-        // Tarjetas (las de días usan el color del navbar por JS)
-        $cards = [
-            ['title' => 'TEMPERATURA',     'value' => '25 °C',  'icon' => 'bi-thermometer-high', 'color' => '#FF5252'],
-            ['title' => 'HUMEDAD',         'value' => '55 %',   'icon' => 'bi-droplet-half',     'color' => '#42A5F5'],
-            ['title' => 'DÍAS RESTANTES',  'value' => $diasRestantes !== null ? ($diasRestantes . ' días') : '—', 'icon' => 'bi-hourglass-split', 'color' => 'navbar'],
-            ['title' => 'DÍA DE INCUBACIÓN','value' => $diasTranscurridos !== null ? $diasTranscurridos : '—',    'icon' => 'bi-calendar-check',  'color' => 'navbar'],
-        ];
-    @endphp
-
-    <div class="row g-4 justify-content-center">
-        @foreach ($cards as $card)
-            <div class="col-12 col-sm-6 col-md-6 col-lg-3">
-                <div class="card shadow border-0 h-100" style="border-radius: 16px;">
-                    <div class="card-header text-white text-center fw-semibold
-                        {{ $card['color'] === 'navbar' ? 'use-navbar-color' : '' }}"
-                        style="border-top-left-radius: 16px; border-top-right-radius: 16px;
-                               {{ $card['color'] !== 'navbar' ? 'background-color: '.$card['color'].';' : '' }}">
-                        {{ $card['title'] }}
+<div class="row g-4 justify-content-center">
+    @foreach ($cards as $card)
+        <div class="col-12 col-sm-6 col-md-6 col-lg-3">
+            <div class="card shadow border-0 h-100" style="border-radius: 16px;">
+                <div class="card-header text-white text-center fw-semibold
+                    {{ $card['color'] === 'navbar' ? 'use-navbar-color' : '' }}"
+                    style="border-top-left-radius: 16px; border-top-right-radius: 16px;
+                           {{ $card['color'] !== 'navbar' ? 'background-color: '.$card['color'].';' : '' }}">
+                    {{ $card['title'] }}
+                </div>
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <div class="icon-animado mb-3">
+                        <i class="bi {{ $card['icon'] }} {{ $card['color'] === 'navbar' ? 'use-navbar-color-icon' : '' }}"
+                           style="font-size: 4.5rem; {{ $card['color'] !== 'navbar' ? 'color: '.$card['color'].';' : '' }}"></i>
                     </div>
-                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                        <div class="icon-animado mb-3">
-                            <i class="bi {{ $card['icon'] }} {{ $card['color'] === 'navbar' ? 'use-navbar-color-icon' : '' }}"
-                               style="font-size: 4.5rem; {{ $card['color'] !== 'navbar' ? 'color: '.$card['color'].';' : '' }}"></i>
-                        </div>
-                        <p class="fs-4 fw-bold mb-0">{{ $card['value'] }}</p>
-                    </div>
+                    <p id="{{ $card['id'] }}" class="fs-4 fw-bold mb-0">{{ $card['value'] }}</p>
                 </div>
             </div>
-        @endforeach
-    </div>
+        </div>
+    @endforeach
+</div>
 
     <section class="pt-4">
     <div class="container">
@@ -165,6 +136,36 @@
                 if (modal) modal.hide();
             });
         </script>
+
+        {{-- Auto-refresco cada 5s --}}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const elTemp = document.getElementById('card-temp');
+  const elHum  = document.getElementById('card-hum');
+  const elDR   = document.getElementById('card-rest');
+  const elDT   = document.getElementById('card-dia');
+
+  async function pull() {
+    try {
+      const rsp = await fetch('{{ route("avicultor.metrics") }}', {cache: 'no-store'});
+      const data = await rsp.json();
+      if (!data.ok) return;
+
+      if (data.temp !== null) elTemp.textContent = `${Number(data.temp).toFixed(1)} °C`;
+      if (data.hum  !== null) elHum.textContent  = `${Number(data.hum).toFixed(1)} %`;
+      if (data.diasRestantes !== null) elDR.textContent = `${data.diasRestantes} días`;
+      if (data.diasTranscurridos !== null) elDT.textContent = `${data.diasTranscurridos}`;
+    } catch(e) {
+      // silenciar errores de red
+    }
+  }
+
+  pull();                 // una vez al cargar
+  setInterval(pull, 5000) // refresco cada 5s
+});
+</script>
+        
+        
 
 
 @endsection

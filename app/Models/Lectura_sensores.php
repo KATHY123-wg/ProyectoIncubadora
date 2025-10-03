@@ -9,6 +9,8 @@ class Lectura_sensores extends Model
 {
     use HasFactory;
 
+    protected $connection = 'mysql_always';  
+
     protected $table = 'lectura_sensores';
 
     public $timestamps = false; // tus columnas son personalizadas (fecha_registro/ultima_actualizacion)
@@ -27,10 +29,10 @@ class Lectura_sensores extends Model
 
     // Cada lectura pertenece a un proceso (tu modelo Incubacion)
     public function proceso()
-{
-    // Tu modelo de procesos se llama Incubacion y usa la tabla 'procesos'
-    return $this->belongsTo(\App\Models\Incubacion::class, 'proceso_id');
-}
+    {
+        // Tu modelo de procesos se llama Incubacion y usa la tabla 'procesos'
+        return $this->belongsTo(\App\Models\Incubacion::class, 'proceso_id');
+    }
 
 
     // Esta relación NO aplica directamente (la incubadora se obtiene vía proceso)

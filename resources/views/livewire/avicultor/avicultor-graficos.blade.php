@@ -20,7 +20,7 @@
             </select>
         </div>
 
-        <div class="col-md-4">
+       {{-- <div class="col-md-4">
             <label>Mes</label>
             <select wire:model="mes" class="form-select">
                 <option value="">Seleccione</option>
@@ -29,7 +29,7 @@
                 @endforeach
             </select>
         </div>
-        
+        --}}
     </div>
     <div class="mb-3">
             <button wire:click="generarDatos" class="btn btn-oliva px-5">Generar Gráficos</button>

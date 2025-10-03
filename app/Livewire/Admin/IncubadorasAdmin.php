@@ -110,11 +110,11 @@ class IncubadorasAdmin extends Component
 
         return [
             // ✅ MAYÚSCULAS sin espacios (A-Z, 0-9, _ y -)
-            'codigo'      => ['required','string','max:20','regex:/^[A-Z0-9_-]+$/', $uniqueCodigo],
-            'descripcion' => ['required','string','max:255'],
+            'codigo'      => ['required', 'string', 'max:20', 'regex:/^[A-Z0-9_-]+$/', $uniqueCodigo],
+            'descripcion' => ['required', 'string', 'max:255'],
             // ✅ AHORA OPCIONAL (solo crear incubadora, sin asignar aún)
-            'usuario_id'  => ['nullable','integer','exists:usuarios,id'],
-            'estado'      => ['required','integer','in:0,1'],
+            'usuario_id'  => ['nullable', 'integer', 'exists:usuarios,id'],
+            'estado'      => ['required', 'integer', 'in:0,1'],
         ];
     }
 
@@ -163,7 +163,6 @@ class IncubadorasAdmin extends Component
         $this->mostrarModal = false;
         $this->dispatch('toast', tipo: 'success', msg: 'Incubadora creada exitosamente.');
         $this->resetForm();
-        
     }
 
     public function actualizar()
@@ -213,7 +212,6 @@ class IncubadorasAdmin extends Component
 
         // éxito
         $this->dispatch('toast', tipo: 'success', msg: 'Estado actualizado.');
-
     }
 
     public function eliminar($id)
@@ -227,7 +225,7 @@ class IncubadorasAdmin extends Component
 
     public function resetForm()
     {
-        $this->reset(['incubadoraId','codigo','descripcion','usuario_id','estado']);
+        $this->reset(['incubadoraId', 'codigo', 'descripcion', 'usuario_id', 'estado']);
         $this->estado = 1;
         $this->resetErrorBag();
         $this->resetValidation();
@@ -236,18 +234,18 @@ class IncubadorasAdmin extends Component
     public function render()
     {
         $query = Incubadora::with('usuario')
-            ->when($this->buscar, function($q) {
-                $q->where(function($qq){
-                    $qq->where('codigo','like',"%{$this->buscar}%")
-                      ->orWhere('descripcion','like',"%{$this->buscar}%");
+            ->when($this->buscar, function ($q) {
+                $q->where(function ($qq) {
+                    $qq->where('codigo', 'like', "%{$this->buscar}%")
+                        ->orWhere('descripcion', 'like', "%{$this->buscar}%");
                 });
             })
             ->when($this->filtroEstado !== '', fn($q) => $q->where('estado', (int)$this->filtroEstado))
             // 🔧 Asegurar que se aplique el filtro cuando haya valor no vacío
-            ->when($this->filtroUsuario !== null && $this->filtroUsuario !== '', function($q){
+            ->when($this->filtroUsuario !== null && $this->filtroUsuario !== '', function ($q) {
                 $q->where('usuario_id', (int) $this->filtroUsuario);
             })
-            ->orderBy('id','desc');
+            ->orderBy('id', 'desc');
 
         $incubadoras = $query->paginate(10);
 
@@ -282,8 +280,8 @@ class IncubadorasAdmin extends Component
     public function asignarIncubadora1()
     {
         $this->validate([
-            'usuarioAsignarId'       => ['required','integer','exists:usuarios,id'],
-            'incubadoraSeleccionada' => ['required','integer','exists:incubadoras,id'],
+            'usuarioAsignarId'       => ['required', 'integer', 'exists:usuarios,id'],
+            'incubadoraSeleccionada' => ['required', 'integer', 'exists:incubadoras,id'],
         ]);
 
         // Asegurar que sigue libre al momento de asignar
@@ -301,9 +299,9 @@ class IncubadorasAdmin extends Component
     {
         $this->incubadorasDisponibles = Incubadora::query()
             ->where('estado', 0) // 👈 inactivas = disponibles
-            ->where(function($q){
+            ->where(function ($q) {
                 $q->whereNull('usuario_id')
-                  ->orWhere('usuario_id', 0); // por si guardan 0 en vez de null
+                    ->orWhere('usuario_id', 0); // por si guardan 0 en vez de null
             })
             ->orderBy('codigo')
             ->get();
@@ -312,15 +310,15 @@ class IncubadorasAdmin extends Component
     public function asignarIncubadora()
     {
         $this->validate([
-            'usuarioAsignarId'       => ['required','integer','exists:usuarios,id'],
-            'incubadoraSeleccionada' => ['required','integer','exists:incubadoras,id'],
+            'usuarioAsignarId'       => ['required', 'integer', 'exists:usuarios,id'],
+            'incubadoraSeleccionada' => ['required', 'integer', 'exists:incubadoras,id'],
         ]);
 
         // Debe seguir inactiva y libre al momento de asignar
         $inc = Incubadora::where('estado', 0)
-            ->where(function($q){
+            ->where(function ($q) {
                 $q->whereNull('usuario_id')
-                  ->orWhere('usuario_id', 0);
+                    ->orWhere('usuario_id', 0);
             })
             ->findOrFail($this->incubadoraSeleccionada);
 
@@ -335,5 +333,4 @@ class IncubadorasAdmin extends Component
         $this->dispatch('toast', ['tipo' => 'success', 'msg' => 'Incubadora asignada correctamente.']);
         $this->cerrarAsignar();
     }
-
 }

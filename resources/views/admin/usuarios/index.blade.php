@@ -78,6 +78,12 @@
             @endforeach
         </tbody>
     </table>
+    <div class="mb-3 d-flex gap-2">
+    <a href="{{ route('reportes.usuarios.pdf', request()->query()) }}" class="btn btn-danger btn-sm">PDF</a>
+    <a href="{{ route('reportes.usuarios.csv', request()->query()) }}" class="btn btn-success btn-sm">CSV</a>
+    <a href="{{ route('reportes.usuarios.xls', request()->query()) }}" class="btn btn-warning btn-sm text-white">XLS</a>
+</div>
+
 </div>
 </div>
 
