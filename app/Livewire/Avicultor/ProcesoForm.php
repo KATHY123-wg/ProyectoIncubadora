@@ -7,6 +7,7 @@ use App\Models\Incubadora;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Livewire\WithPagination;
 
 class ProcesoForm extends Component
 {
@@ -27,7 +28,11 @@ class ProcesoForm extends Component
     public $mostrarFormulario = false;
     public $modoEdicion = false;
     public $proceso_id = null;
+    //
+   use WithPagination;
 
+    protected $paginationTheme = 'bootstrap';
+    public $perPage = 10;
     /** 🔔 Mensajes claros de validación */
     protected $messages = [
         'incubadora_id.required' => 'Debe seleccionar una incubadora.',
@@ -53,7 +58,7 @@ class ProcesoForm extends Component
 
     public function updatedIncubadoraId()
     {
-        // $this->cargarProcesos();
+         $this->resetPage();
     }
 
     /** 🔧 Normaliza nombre: colapsa espacios y convierte a MAYÚSCULAS */
@@ -65,34 +70,31 @@ class ProcesoForm extends Component
         $this->nombre = mb_strtoupper($n, 'UTF-8');
     }
 
-    /** ✍️ Convierte en mayúsculas mientras escribe */
-    public function updatedNombre($val)
-    {
-        $this->normalizarNombre();
-    }
-
     /** 🧪 Nombre sugerido tipo “PROCESO N” */
     protected function sugerirNombre(): string
     {
-        if (!$this->incubadora_id) {
-            return 'PROCESO';
-        }
-        $n = Incubacion::where('incubadora_id', $this->incubadora_id)->count() + 1;
-        return 'PROCESO ' . $n;
+        if (!$this->incubadora_id) return 'PROCESO';
+
+        $n = Incubacion::where('incubadora_id', $this->incubadora_id)->count();
+        return 'PROCESO ' . ($n + 1);
     }
+
 
     // Cargar procesos de la incubadora seleccionada
     public function cargarProcesos()
     {
         if (!$this->incubadora_id) {
-            $this->procesos = [];
+            $this->procesos = collect(); // evita errores cuando no hay selección
             return;
         }
 
-        $this->procesos = Incubacion::where('incubadora_id', $this->incubadora_id)
-            ->orderBy('fecha_inicio', 'desc')
-            ->get();
+        $this->procesos = Incubacion::query()
+            ->where('incubadora_id', $this->incubadora_id)
+            ->select(['id','nombre','fecha_inicio','fecha_estimada','cantidad_total_huevos'])
+            ->orderByDesc('fecha_inicio')
+            ->paginate($this->perPage);
     }
+
 
     // Mostrar formulario de creación (ahora en modal)
     public function irACrear()
@@ -168,7 +170,7 @@ class ProcesoForm extends Component
             'incubadora_id'         => (int)$this->incubadora_id,
             'nombre'                => $this->nombre, // ya MAYÚSCULAS
             'fecha_inicio'          => $inicio,
-            'fecha_fin_estimada'    => $finEst,
+            'fecha_estimada'    => $finEst,
             'cantidad_total_huevos' => (int)$this->cantidad_total_huevos,
             'observaciones'         => $this->observaciones,
             'modificado_por'        => Auth::id(),
@@ -180,7 +182,7 @@ class ProcesoForm extends Component
         $this->cargarProcesos();
 
         // 🔴 CERRAR MODAL
-        $this->dispatch('cerrar-modal-proceso');
+        //$this->dispatch('cerrar-modal-proceso');
 
         $this->cancelarCrear(); // limpia estado
 
@@ -191,7 +193,7 @@ class ProcesoForm extends Component
     public function editarProceso($id)
     {
         $proc = Incubacion::findOrFail($id);
-
+        $prevInc = $this->incubadora_id;
         // Asegura que la incubadora del proceso sea la seleccionada
         $this->incubadora_id = $proc->incubadora_id;
 
@@ -205,9 +207,9 @@ class ProcesoForm extends Component
         $this->modoEdicion = true;
         $this->mostrarFormulario = true;
 
-        // Refresca listado (por si cambió incubadora seleccionada)
+         if ($prevInc !== $this->incubadora_id) {
         $this->cargarProcesos();
-
+    }
         // 🟢 ABRIR MODAL
         $this->dispatch('abrir-modal-proceso');
     }
@@ -251,7 +253,7 @@ class ProcesoForm extends Component
             'incubadora_id'         => (int)$this->incubadora_id,
             'nombre'                => $this->nombre, // MAYÚSCULAS
             'fecha_inicio'          => $inicio,
-            'fecha_fin_estimada'    => $finEst,
+            'fecha_estimada'    => $finEst,
             'cantidad_total_huevos' => (int)$this->cantidad_total_huevos,
             'observaciones'         => $this->observaciones,
             'modificado_por'        => Auth::id(),
@@ -279,4 +281,20 @@ class ProcesoForm extends Component
         $this->cargarProcesos();
         $this->dispatch('toast', ['tipo' => 'success', 'msg' => 'Proceso eliminado.']);
     }
+    public function render()
+{
+    $procesos = collect();
+    if ($this->incubadora_id) {
+        $procesos = Incubacion::query()
+            ->where('incubadora_id', $this->incubadora_id)
+            ->select(['id','nombre','fecha_inicio','fecha_estimada','cantidad_total_huevos'])
+            ->orderByDesc('fecha_inicio')
+            ->paginate($this->perPage);
+    }
+
+    return view('livewire.avicultor.proceso-form', [
+        'procesos' => $procesos,
+    ]);
+}
+
 }

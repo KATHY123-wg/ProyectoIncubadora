@@ -12,6 +12,10 @@ use App\Livewire\Admin\IncubadorasAdmin;
 use App\Http\Controllers\CaptchaController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ReportesPVExportController;
+use App\Http\Controllers\AvicultorMetricsController;
+
+
+
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -44,7 +48,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/nosotros', [AvicultorController::class, 'nosotros'])->name('avicultor.nosotros');
         Route::get('/lecturas-por-incubadora/{incubadoraId}', [AvicultorController::class, 'lecturasPorIncubadora']);
         // routes/web.php (dentro del middleware 'auth' + 'role:avicultor')
-        Route::get('/metrics', [AvicultorController::class, 'metrics'])->name('avicultor.metrics');
+      //  Route::get('/metrics', [AvicultorController::class, 'metrics'])->name('avicultor.metrics');
 
     });
 
@@ -178,3 +182,19 @@ Route::middleware(['auth','role:avicultor'])->group(function () {
         ->name('avicultor.procesos.xls');
 });
 
+////////////alertas
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/alertas', function () {
+        $user = auth()->user();
+        if (!in_array($user->rol, ['admin','avicultor'])) {
+            abort(403); // vendedor no entra
+        }
+        return view('alertas.alertas');
+    })->name('alertas.panel');
+});
+//////////// lectura para el rol avicultor
+Route::middleware(['auth'])->group(function () {
+   Route::get('/avicultor/metrics', AvicultorMetricsController::class)
+       ->name('avicultor.metrics');
+});

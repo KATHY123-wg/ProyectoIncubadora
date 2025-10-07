@@ -9,8 +9,6 @@ class Lectura_sensores extends Model
 {
     use HasFactory;
 
-    protected $connection = 'mysql_always';  
-
     protected $table = 'lectura_sensores';
 
     public $timestamps = false; // tus columnas son personalizadas (fecha_registro/ultima_actualizacion)

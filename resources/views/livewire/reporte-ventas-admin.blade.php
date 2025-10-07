@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="{{ asset('css/ventasadmin.css') }}">
 <div class="container mt-4">
 @php
   $qs = [
@@ -17,73 +18,7 @@
 
     <style>
     /* === Paleta combinada con tu layout actual === */
-    :root{
-        --brand-primary:   #556B2F;   /* olivo oscuro (navbar/topbar) */
-        --brand-secondary: #6C7A3D;   /* olivo medio (sidebar, bordes) */
-        --surface:         #FFF8E1;   /* crema de fondo */
-        --accent:          #A1887F;   /* acento marrón claro para botones */
-        --card-header:     #5D4037;   /* marrón principal para encabezados */
-        --ink:             #2b2b2b;  
-         --blue:           #edfaf5ff;   /* texto base */
-    }
 
-    .card-report{
-        border: 1px solid rgba(0,0,0,.08);
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 8px 18px rgba(0,0,0,.08);
-        background: #fff;
-    }
-    .card-report .card-header{
-        background: var(--brand-secondary);
-        color:#fff;
-        padding: 16px 20px;
-    }
-    .card-report .card-header h2{
-        font-weight: 800; 
-        letter-spacing:.3px;
-        margin:0;
-        font-size: clamp(20px, 2vw, 26px);
-    }
-    .card-report .card-header .sub{
-        opacity:.85; font-size: 13px;
-    }
-
-    /* Barra de filtros */
-    .toolbar{
-        background: var(--blue);
-        border-bottom: 1px solid var(--brand-secondary);
-    }
-    .toolbar .form-label{
-        font-weight:600; font-size: 13px; color: var(--brand-secondary);
-    }
-
-    /* Botón de acción */
-    .btn-accent{ background: var(--brand-primary); color:#ffffff; border:none; }
-    .btn-accent:hover{ filter:brightness(.92); color:#fff; }
-
-    /* Tabla */
-    .table thead th{
-        position: sticky; top:0; z-index: 1;
-        background: var(--brand-primary); 
-        color:#fff;
-        border-bottom: 0;
-    }
-    .table tbody tr:hover{ background: rgba(255,248,225,.6); }
-    .table td, .table th{ vertical-align: middle; }
-    .td-money{
-        text-align:right;
-        font-variant-numeric: tabular-nums;
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        color: var(--ink);
-    }
-
-    /* Contenedor del gráfico */
-    #graficoVentas{
-        background:#fff;
-        border:1px solid rgba(0,0,0,.08);
-        border-radius:12px;
-    }
 </style>
     <div class="card-report">
 

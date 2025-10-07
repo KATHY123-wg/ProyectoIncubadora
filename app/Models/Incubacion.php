@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Incubacion extends Model
 {
     use HasFactory;
-    
-    protected $connection = 'mysql_always'; 
+
 
     public $timestamps = false;
 

@@ -36,24 +36,23 @@ return [
             ]) : [],
         ],
 
-        // >>> Conexión AlwaysData (CORRECTO: dentro de 'connections')
-        'mysql_always' => [
-            'driver'   => 'mysql',
-            'url'      => env('DATABASE_URL'),
-            'host'     => env('ALWAYS_DB_HOST', '127.0.0.1'),
-            'port'     => env('ALWAYS_DB_PORT', '3306'),
-            'database' => env('ALWAYS_DB_DATABASE', 'forge'),
-            'username' => env('ALWAYS_DB_USERNAME', 'forge'),
-            'password' => env('ALWAYS_DB_PASSWORD', ''),
-            'unix_socket' => env('DB_SOCKET', ''),
-            'charset'   => 'utf8mb4',
+            // >>> Conexión AlwaysData (CORRECTO: dentro de 'connections')
+         'mysql_always' => [
+            'driver' => 'mysql',
+            'host' => env('DB_ALWAYS_HOST', 'mysql-1.alwaysdata.com'),
+            'port' => env('DB_ALWAYS_PORT', 3306),
+            'database' => env('DB_ALWAYS_DATABASE', ''),
+            'username' => env('DB_ALWAYS_USERNAME', ''),
+            'password' => env('DB_ALWAYS_PASSWORD', ''),
+            'unix_socket' => env('DB_ALWAYS_SOCKET', ''),
+            'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
-            'prefix'    => '',
+            'prefix' => '',
             'prefix_indexes' => true,
-            'strict'    => true,
-            'engine'    => null,
-            'options'   => extension_loaded('pdo_mysql') ? array_filter([
-                \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
+            'strict' => false,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA', null),
             ]) : [],
         ],
 

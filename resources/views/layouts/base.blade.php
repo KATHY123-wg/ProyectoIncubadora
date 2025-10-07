@@ -26,7 +26,7 @@
             </button>
 
             <span class="navbar-brand mb-0 h1">@yield('titulo_nav', 'Sistema de Incubación Web')</span>
-
+            @livewire('alertas-indicador')
             <form method="POST" action="{{ route('logout') }}" class="mb-0">
                 @csrf
                 <button type="submit" class="btn btn-danger fw-bold d-flex align-items-center gap-2 btn-logout-hover">
@@ -49,6 +49,7 @@
         </footer>
     </div>
 
+    {{-- ====== SCRIPTS: utilidades básicas primero ====== --}}
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById("sidebar");
@@ -56,11 +57,14 @@
         }
     </script>
     <script src="{{ asset('start/js/scripts.js') }}"></script>
+
+    {{-- DUPLICADO: ApexCharts también se carga más abajo en @once --}}
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
     {{-- SweetAlert2 CDN --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    {{-- Mostrar mensajes de sesión como modales "bonitos" --}}
+    {{-- ====== Mensajes de sesión (modales) ====== --}}
     @if (session('success'))
     <script>
     Swal.fire({
@@ -97,36 +101,10 @@
     </script>
     @endif
 
-    {{-- 🔕 INHABILITADO: Preguntar asignación de incubadora al crear avicultor (se asigna en Ventas) --}}
-    {{--
-    @if (session('preguntar_incubadora'))
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const nombre = @json(session('nuevo_usuario_nombre'));
-        const id     = @json(session('nuevo_usuario_id'));
-        if (!id) return;
+    {{-- ====== Livewire scripts deben ir antes de cualquier uso de Livewire.on(...) ====== --}}
+    @livewireScripts
 
-        Swal.fire({
-            icon: 'question',
-            title: 'Asignar incubadora',
-            html: `El usuario <b>${nombre ?? ''}</b> fue registrado como avicultor.<br>¿Deseas asignarle una incubadora ahora?`,
-            showCancelButton: true,
-            confirmButtonText: 'Sí, asignar',
-            cancelButtonText: 'No, después',
-            confirmButtonColor: '#6f7744', // tu color oliva
-            cancelButtonColor: '#6c757d',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Ruta a Gestión de Incubadoras con el usuario preseleccionado
-                window.location.href = "{{ route('admin.incubadoras') }}" + "?asignar_para=" + encodeURIComponent(id);
-            }
-        });
-    });
-    </script>
-    @endif
-    
-    --}}
+    {{-- ====== Bloque que empuja scripts a @stack('scripts') (se imprimen más abajo) ====== --}}
     @push('scripts')
         <script>
             Livewire.on('cerrar-modal', () => {
@@ -136,8 +114,7 @@
         </script>
     @endpush
 
-
-    {{-- Preguntar si deseas desactivar también las incubadoras del usuario (Sí / No) --}}
+    {{-- ====== Preguntar desactivar incubadoras ====== --}}
     @if (session('preguntar_baja_inc'))
     <form id="frmDesactivarIncubs" action="{{ route('usuarios.desactivar-incubadoras', session('usuario_baja_id')) }}" method="POST" class="d-none">
         @csrf
@@ -166,7 +143,7 @@
     </script>
     @endif
 
-    {{-- Preguntar si deseas activar también las incubadoras del usuario (Sí / No) --}}
+    {{-- ====== Preguntar activar incubadoras ====== --}}
     @if (session('preguntar_alta_inc'))
     <form id="frmActivarIncubs" action="{{ route('usuarios.activar-incubadoras', session('usuario_alta_id')) }}" method="POST" class="d-none">
         @csrf
@@ -202,14 +179,47 @@
             showConfirmButton: false
         });
     });
-</script>
-
+    </script>
     @endif
+
+    {{-- ====== Toasts para AlertasPanel ====== --}}
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Configuración del toast (SweetAlert2)
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 4500,
+            timerProgressBar: true,
+        });
+
+        // Evento que llega desde AlertasPanel
+        Livewire.on('nuevaAlerta', (data) => {
+            if (!data) return;
+
+            const nivel = data.nivel || 'info';
+            const mensaje = data.msg || 'Nueva alerta detectada.';
+
+            let icon = 'info';
+            if (nivel === 'critical') icon = 'error';
+            else if (nivel === 'warning') icon = 'warning';
+
+            Toast.fire({
+                icon: icon,
+                title: mensaje
+            });
+        });
+    });
+    </script>
+
+    {{-- ====== Stack de scripts específicos de vistas ====== --}}
+    @stack('scripts')
+
+    {{-- ====== Bloque @once con Bootstrap Bundle y (de nuevo) ApexCharts ====== --}}
+    @once
+      <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @endonce
 </body>
-@livewireScripts
-@once
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-@endonce
-@stack('scripts')
 </html>

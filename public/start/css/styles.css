@@ -20,8 +20,215 @@
   --sidebar-gray: #a0a887; /* gris sidebar */
   --blue-gray: #edf2fa;    /* gris azulado para body */
   --text-light: #ffffff;
+  --brand-primary:   #556B2F;  /* olivo oscuro */
+  --brand-secondary: #6C7A3D;  /* olivo medio */
+  --surface:         #FFF8E1;  /* crema */
+  --accent:          #A1887F;  /* marrón claro/acento */
+  --panel:           #5D4037;  /* marrón cabeceras */
+    --olive-600:#505733;
+    --olive-50:#f5f7ef;
+    --ink:#1f2a37;
+    --olive-dark1:#556B2F;
+    --olive1:#6C7A3D;
+    --brown:#5D4037;
+    --gold:#F3AF43;
+    --cream:#FFF8E1;
+    --line:rgba(0,0,0,.08);
+            --muted:#6b7280;        /* texto suave */      
+            --card:#fff;
+            --blue:            #edfaf5ff; 
 }
+/* ESTO ES PARA SALE.BLADE PARA RECIBOS*/
 
+/* esto es para reportes del avicultor*/
+ .report-shell{
+            border:1px solid var(--line);
+            border-radius:16px;
+            background: var(--card);
+            box-shadow: 0 10px 24px rgba(0,0,0,.06);
+            overflow:hidden;
+        }
+        .report-head{
+            background: linear-gradient(135deg, var(--olive1) 0%, #6C7A3D 100%);
+            color:#fff;
+            padding:18px 20px;
+        }
+        .report-head h3{
+            margin:0; font-weight:800; letter-spacing:.3px;
+        }
+        .report-sub{ opacity:.9; font-size:13px }
+
+        .toolbar{
+            background: var(--blue);
+            border-bottom:1px solid var(--line);
+        }
+        .toolbar .form-label{
+            font-weight:700; color: var(--olive1); font-size: .95rem;
+        }
+
+        .btn-oliva{ /* tu clase existente mantiene color, damos un hover más pro */
+            background: var(--olive1); color:#fff; border:none;
+        }
+        .btn-oliva:hover{ filter:brightness(.95); color:#fff; }
+
+        .section{
+            padding:18px 20px;
+        }
+        .section-title{
+            font-weight:800; color: var(--olive1); margin-bottom:10px;
+            display:inline-flex; align-items:center; gap:.5rem;
+        }
+        .section-title::before{
+            content:""; width:10px; height:10px; border-radius:3px; background: var(--gold);
+            box-shadow:0 0 0 3px rgba(243,175,67,.25);
+        }
+
+        .table thead th{
+            background: linear-gradient(180deg, var(--olive-dark1), var(--olive));
+            color:#fff; font-weight:700; letter-spacing:.2px; border-bottom:0;
+        }
+        .table tbody tr:hover{ background: rgba(255,248,225,.55); }
+        .table td,.table th{ vertical-align: middle; }
+
+        .alert-warning{
+            background: rgba(203, 246, 240, 0.12);
+            border:1px solid rgba(73, 118, 105, 0.35);
+            color:#5b3e14;
+            font-weight:600;
+        }
+
+        .btn-back{
+            background: #ececec; border:1px solid var(--line); color:#444;
+        }
+        .btn-back:hover{ background:#e6e6e6; }
+/* esto es para proceso form del avicultor*/
+
+  /* ====== ENCABEZADO ====== */
+  .section-title{
+    font-weight:800; font-size:1.25rem;
+    color: var(--brown);
+    margin-bottom:1rem;
+    display:flex; align-items:center; gap:.5rem;
+  }
+  .section-title::before{
+    content:""; width:10px; height:10px; border-radius:3px;
+    background:var(--gold); box-shadow:0 0 0 3px rgba(243,175,67,.25);
+  }
+
+  /* ====== FILTROS ====== */
+  .form-label{ font-weight:700; color: var(--olive-dark1); }
+  .form-select, .form-control{
+    border-radius:10px;
+    border:1px solid var(--line);
+    box-shadow:none;
+  }
+  .form-select:focus, .form-control:focus{
+    border-color: var(--olive1);
+    box-shadow:0 0 0 .15rem rgba(108,122,61,.25);
+  }
+
+  /* ====== BOTONES ====== */
+  .btn-success{
+    background: var(--olive1);
+    border:none;
+    font-weight:600;
+    border-radius:10px;
+  }
+  .btn-success:hover{ filter:brightness(.95); }
+
+  /* ====== TABLA ====== */
+  .table-procesos thead th{
+    background: linear-gradient(180deg, var(--olive-dark1), var(--olive1));
+    color:#fff; border:5;
+    letter-spacing:.5px; font-weight:700;
+  }
+  .table-procesos tbody tr:hover{ background: rgba(255,248,225,.6); }
+  .chip-nro{
+    display:inline-block; min-width:2.1rem; text-align:center;
+    padding:.25rem .55rem; border-radius:999px; font-weight:700;
+    background: var(--cream); color: var(--brown);
+    border:1px solid var(--line);
+  }
+  .badge-soft{
+    background: rgba(243,175,67,.12); color: var(--brown);
+    border:1px solid rgba(243,175,67,.25);
+    border-radius:999px; padding:.2rem .6rem;
+    font-weight:600;
+  }
+
+  /* Bordes redondeados en la tabla */
+  .table-procesos { border-radius: 10px; overflow: hidden; }
+  .table-wrap-procesos, .table-responsive { border-radius: 10px; overflow: hidden; }
+
+/* esto es para ventas de admin*/
+.venta-card .card-header{
+      background:linear-gradient(180deg, var(--olive), var(--olive-600));
+      color:#fff; border-bottom:none;
+    }
+    .venta-card .card-header .small{
+      opacity:.9;
+    }
+    .venta-card .card-body{ background:#fff; }
+    .venta-card .form-label{ font-weight:600; letter-spacing:.2px; }
+    .venta-card .input-group-text{ background:#f8fafc; }
+    .sug-list{
+      border-radius:.6rem; overflow:hidden; z-index:1061;  /* sobre modales */
+      box-shadow:0 10px 26px rgba(0,0,0,.12);
+    }
+    .summary{
+      background:var(--olive-50);
+      border:1px dashed rgba(95,102,58,.35);
+      border-radius:14px;
+    }
+    .summary .lead{ font-weight:700; color:var(--ink); }
+    .badge-soft{
+      background:#eef2ff; color:#3b82f6; border:1px solid #dbeafe; font-weight:600;
+    }
+    .btn-cta{
+      padding:.625rem 1.2rem; border-radius:12px; font-weight:700;
+      box-shadow:0 8px 18px rgba(95,102,58,.18);
+    }
+/* esto es de la parte de nosotros.blade.php*/
+.about-hero{
+            background: linear-gradient(135deg, var(--brand-secondary) 0%, #58613bff 100%);
+            color: #fff;
+            border-radius: 18px;
+            padding: 28px 22px;
+            box-shadow: 0 8px 20px rgba(0,0,0,.08);
+        }
+        .about-hero h2{
+            font-weight: 800; letter-spacing: .4px;
+            margin:0 0 6px 0; font-size: clamp(22px, 2.2vw, 30px);
+        }
+        .about-hero p{ margin:0; opacity:.95 }
+        .about-section{
+            border: 1px solid rgba(0,0,0,.06);
+            border-radius:16px;
+            background:#fff;
+            box-shadow: 0 10px 24px rgba(0,0,0,.06);
+        }
+        .about-section .head{
+            background: var(--surface);
+            border-bottom: 1px solid rgba(0,0,0,.06);
+            padding: 12px 16px;
+            border-top-left-radius:16px; border-top-right-radius:16px;
+            color: var(--brand-secondary);
+            font-weight: 700;
+        }
+        .about-section .body{ padding: 16px 18px; color: var(--ink); }
+        .about-list{ margin:0; padding-left: 1.1rem; }
+        .about-list li{ margin:.25rem 0; }
+        .badge-role{
+            background:#efebe9; color:#4e342e; border:1px solid #d7ccc8;
+            font-weight:600; border-radius:999px; padding:.25rem .6rem; font-size:.8rem;
+        }
+        .contact-link{
+            text-decoration:none;
+            display:inline-flex; align-items:center; gap:.5rem;
+            color: var(--brand-secondary);
+        }
+        .contact-link:hover{ color: var(--panel); }
+        .divider{ height:1px; background:rgba(0,0,0,.06); margin: 14px 0; }
 
 /*botonoes de generar*/
 

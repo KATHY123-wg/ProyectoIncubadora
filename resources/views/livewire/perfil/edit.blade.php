@@ -26,6 +26,19 @@
                             @error('usuario') <span class="text-danger small">{{ $message }}</span> @enderror
                             <div class="form-text">Máx. 60 caracteres. Debe ser único.</div>
                         </div>
+                        {{-- Contraseña actual (obligatoria para confirmar cambios) --}}
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña actual</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" wire:model.defer="current_password" id="inp-current-pass" required>
+                                <button class="btn btn-outline-secondary" type="button" id="btn-toggle-current" tabindex="-1">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            @error('current_password') <span class="text-danger small">{{ $message }}</span> @enderror
+                            <div class="form-text">Requerida para confirmar cualquier cambio de usuario o contraseña.</div>
+                        </div>
+
 
                         {{-- Nueva contraseña --}}
                         <div class="mb-3">
@@ -51,19 +64,7 @@
                             </div>
                         </div>
 
-                        {{-- Contraseña actual (obligatoria para confirmar cambios) --}}
-                        <div class="mb-3">
-                            <label class="form-label">Contraseña actual</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" wire:model.defer="current_password" id="inp-current-pass" required>
-                                <button class="btn btn-outline-secondary" type="button" id="btn-toggle-current" tabindex="-1">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                            </div>
-                            @error('current_password') <span class="text-danger small">{{ $message }}</span> @enderror
-                            <div class="form-text">Requerida para confirmar cualquier cambio de usuario o contraseña.</div>
-                        </div>
-
+                        
                     </div>
 
                     <div class="modal-footer">

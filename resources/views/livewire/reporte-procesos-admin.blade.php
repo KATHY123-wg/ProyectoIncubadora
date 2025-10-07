@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="{{ asset('css/reportesadmin.css') }}">
 <div class="container mt-4">
     @php
   $qs = [
@@ -17,33 +18,7 @@
 </div>
 
     {{-- ====== SKIN: paleta y estilos visuales ====== --}}
-    <style>
-        :root{
-            --brand-primary:   #556B2F;   /* olivo oscuro (encabezados) */
-            --brand-secondary: #6C7A3D;   /* olivo medio (sidebar/bordes) */
-            --surface:         #FFF8E1;   /* crema */
-            --accent:          #A1887F;   /* botón */
-            --card-header:     #5D4037;   /* marrón título panel */
-            --ink:             #2b2b2b;
-            --blue:            #edfaf5ff; 
-        }
-        .card-report{border:1px solid rgba(0,0,0,.08); border-radius:16px; overflow:hidden; box-shadow:0 8px 18px rgba(0,0,0,.08); background:#fff;}
-        .card-report .card-header{background:var(--brand-secondary); color:#fff; padding:16px 20px;}
-        .card-report .card-header h2{font-weight:800; letter-spacing:.3px; margin:0; font-size:clamp(20px,2vw,26px);}
-        .card-report .card-header .sub{opacity:.85; font-size:13px}
-        .toolbar{background:var(--blue); border-bottom:1px solid var(--brand-secondary)}
-        .toolbar .form-label{font-weight:600; font-size:13px; color:var(--brand-secondary)}
-        .btn-accent{background:var(--brand-primary); color:#ffffff; border:none;}
-        .btn-accent:hover{filter:brightness(.92); color:#50876b;}
-        .table thead th{position:sticky; top:0; z-index:1; background:var(--brand-primary); color:#fff; border-bottom:0}
-        .table tbody tr:hover{background:rgba(236, 240, 247, 0.6)}
-        .table td,.table th{vertical-align:middle}
-        .kv{display:flex; gap:.75rem}
-        .kv .k{min-width:220px; color:#5f5f5f; font-weight:600}
-        #graficoProceso{background:#fff; border:1px solid rgba(0,0,0,.08); border-radius:12px}
-        .chip{display:inline-block; padding:.35rem .6rem; border-radius:999px; background:#edf2fa; color:#4e342e; font-weight:600; font-size:.85rem}
-    </style>
-
+  
     <div class="card-report">
         {{-- Header --}}
         <div class="card-header">

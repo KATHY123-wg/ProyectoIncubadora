@@ -1,0 +1,33 @@
+ :root{
+      --olive:#5f663a;
+      --olive-600:#505733;
+      --olive-50:#f5f7ef;
+      --ink:#1f2a37;
+    }
+    .venta-card .card-header{
+      background:linear-gradient(180deg, var(--olive), var(--olive-600));
+      color:#fff; border-bottom:none;
+    }
+    .venta-card .card-header .small{
+      opacity:.9;
+    }
+    .venta-card .card-body{ background:#fff; }
+    .venta-card .form-label{ font-weight:600; letter-spacing:.2px; }
+    .venta-card .input-group-text{ background:#f8fafc; }
+    .sug-list{
+      border-radius:.6rem; overflow:hidden; z-index:1061;  /* sobre modales */
+      box-shadow:0 10px 26px rgba(0,0,0,.12);
+    }
+    .summary{
+      background:var(--olive-50);
+      border:1px dashed rgba(95,102,58,.35);
+      border-radius:14px;
+    }
+    .summary .lead{ font-weight:700; color:var(--ink); }
+    .badge-soft{
+      background:#eef2ff; color:#3b82f6; border:1px solid #dbeafe; font-weight:600;
+    }
+    .btn-cta{
+      padding:.625rem 1.2rem; border-radius:12px; font-weight:700;
+      box-shadow:0 8px 18px rgba(95,102,58,.18);
+    }

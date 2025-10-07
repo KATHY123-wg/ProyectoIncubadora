@@ -10,8 +10,7 @@ class Incubadora extends Model
     use HasFactory;
 
 
-    // Usa tus timestamps en español
-    protected $connection = 'mysql_always'; 
+   
     const CREATED_AT = 'fecha_registro';
     const UPDATED_AT = 'ultima_actualizacion';
     public $timestamps = false;
